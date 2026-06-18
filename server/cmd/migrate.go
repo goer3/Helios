@@ -13,6 +13,7 @@ func init() {
 	migrateCmd.AddCommand(migrateDataCmd)
 	migrateTableCmd.Flags().StringVar(&common.ParamSystemConfigFile, "config", "", "指定服务启动配置文件")
 	migrateDataCmd.Flags().StringVar(&common.ParamSystemConfigFile, "config", "", "指定服务启动配置文件")
+	migrateDataCmd.Flags().StringVar(&common.ParamSystemMigrateTableName, "table", "all", "指定数据表名称")
 }
 
 // 数据迁移
@@ -41,6 +42,7 @@ var migrateDataCmd = &cobra.Command{
 		initialize.Config()
 		initialize.SystemLogger()
 		initialize.MySQL()
-		initialize.Data()
+		// 通过 --table 参数判断是否初始化所有数据表或指定数据表
+		initialize.Data(common.ParamSystemMigrateTableName)
 	},
 }

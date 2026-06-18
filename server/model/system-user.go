@@ -19,7 +19,7 @@ type SystemUser struct {
 	AvatarUrl    string         `gorm:"type:varchar(255);not null;default:'';comment:头像" json:"avatar_url"`
 	LastLoginIP  string         `gorm:"type:varchar(45);not null;default:'';comment:最后登录IP" json:"last_login_ip"`
 	LastLoginAt  *carbon.Carbon `gorm:"type:datetime;index:idx_system_user_last_login_at;comment:最后登录时间" json:"last_login_at"`
-	Status       uint           `gorm:"type:tinyint unsigned;not null;default:1;comment:用户状态（0：禁用，1：启用）" json:"status"`
+	Status       uint           `gorm:"type:tinyint unsigned;not null;default:0;comment:用户状态（0：禁用，1：启用）" json:"status"`
 	ExpireAt     *carbon.Carbon `gorm:"type:datetime;index:idx_system_user_expire_at;comment:过期时间" json:"expire_at" copier:"-"`
 	SystemRoleId uint           `gorm:"not null;index:idx_system_user_role_id;comment:角色ID" json:"system_role_id"`
 	SystemRole   *SystemRole    `gorm:"foreignKey:SystemRoleId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT;" json:"system_role,omitempty"` // 指针类型解决 omitempty 为空问题

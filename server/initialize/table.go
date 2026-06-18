@@ -86,6 +86,7 @@ func Table() {
 	defer func() { common.DB.Logger = oldLogger }()
 
 	models := []any{
+		&model.SystemSetting{},
 		&model.SystemRole{},
 		&model.SystemMenu{},
 		&model.SystemApiCategory{},

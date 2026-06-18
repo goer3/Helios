@@ -2,21 +2,39 @@ package api
 
 import (
 	"Helios/common"
+	"Helios/dto"
 	"Helios/model"
 	"Helios/pkg/response"
+	"Helios/service"
 
 	"github.com/gin-gonic/gin"
 )
 
 // 获取角色列表
 func SystemRoleListHandler(ctx *gin.Context) {
-	var roleList []model.SystemRole
-	if err := common.DB.Find(&roleList).Error; err != nil {
-		common.SystemLog.Error("获取系统角色列表失败: ", err)
-		response.FailureWithMessage("获取系统角色列表失败")
+	var title string = "获取角色列表"
+	var list []model.SystemRole
+	if err := common.DB.Find(&list).Error; err != nil {
+		common.SystemLog.Error(title+"失败: ", err)
+		response.FailureWithMessage(title + "失败:" + err.Error())
 		return
 	}
 	response.SuccessWithData(map[string]any{
-		"list": roleList,
+		"list": list,
 	})
+}
+
+// 创建角色
+func SystemRoleCreateHandler(ctx *gin.Context) {
+	var title string = "创建角色"
+	var req dto.SystemRoleCreateRequest
+	if ok, msg := BindAndValidate(ctx, &req); !ok {
+		response.FailureWithMessage(msg)
+		return
+	}
+	if err := service.CreateFromDto[model.SystemRole](common.DB, &req); err != nil {
+		response.FailureWithMessage(title + "失败：" + err.Error())
+		return
+	}
+	response.SuccessWithMessage(title + "成功")
 }

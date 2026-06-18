@@ -29,14 +29,15 @@ func SystemUserCreate(req *dto.SystemUserCreateRequest) error {
 	// 密码加密
 	hashedPassword, err := utils.PasswordEncrypt(req.Password)
 	if err != nil {
-		return errors.New("密码加密失败：" + err.Error())
+		common.SystemLog.Error("密码加密失败：", err)
+		return err
 	}
 
 	// 数据转换
 	var user = model.SystemUser{}
 	if err := copier.Copy(&user, &req); err != nil {
-		common.SystemLog.Error("创建用户数据转换异常：", err.Error())
-		return errors.New("创建用户数据转换异常：" + err.Error())
+		common.SystemLog.Error("创建用户数据转换异常：", err)
+		return err
 	}
 
 	// 设置密码和过期时间
@@ -45,8 +46,8 @@ func SystemUserCreate(req *dto.SystemUserCreateRequest) error {
 
 	// 创建用户
 	if err := common.DB.Create(&user).Error; err != nil {
-		common.SystemLog.Error("创建用户失败：", err.Error())
-		return errors.New("创建用户失败：" + err.Error())
+		common.SystemLog.Error("创建用户失败：", err)
+		return err
 	}
 
 	return nil

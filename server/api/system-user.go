@@ -5,7 +5,6 @@ import (
 	"Helios/dto"
 	"Helios/model"
 	"Helios/pkg/response"
-	"Helios/pkg/utils"
 	"Helios/service"
 
 	"github.com/gin-gonic/gin"
@@ -13,35 +12,31 @@ import (
 
 // 获取用户列表
 func SystemUserListHandler(ctx *gin.Context) {
-	var userList []model.SystemUser
+	var title string = "获取用户列表"
+	var list []model.SystemUser
 
 	// TODO: 实现分页和查询条件
-	if err := common.DB.Preload("SystemRole").Find(&userList).Error; err != nil {
-		common.SystemLog.Error("获取用户列表失败：", err.Error())
-		response.FailureWithMessage("获取用户列表失败：" + err.Error())
+	if err := common.DB.Preload("SystemRole").Find(&list).Error; err != nil {
+		common.SystemLog.Error(title+"失败: ", err)
+		response.FailureWithMessage(title + "失败:" + err.Error())
 		return
 	}
-
 	response.SuccessWithData(map[string]any{
-		"list": userList,
+		"list": list,
 	})
 }
 
 // 创建用户
 func SystemUserCreateHandler(ctx *gin.Context) {
+	var title string = "创建用户"
 	var req dto.SystemUserCreateRequest
-	// 验证请求参数，使用 binding 标签进行验证
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		msg := utils.GetValidateErrorMessage(err, &req)
+	if ok, msg := BindAndValidate(ctx, &req); !ok {
 		response.FailureWithMessage(msg)
 		return
 	}
-
-	// 调用服务层创建用户
 	if err := service.SystemUserCreate(&req); err != nil {
 		response.FailureWithMessage(err.Error())
 		return
 	}
-
-	response.SuccessWithMessage("用户创建成功")
+	response.SuccessWithMessage(title + "成功")
 }

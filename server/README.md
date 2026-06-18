@@ -21,4 +21,6 @@ go get -u github.com/redis/go-redis/v9
 go get -u github.com/appleboy/gin-jwt/v3
 # 结构体赋值转换
 go get -u github.com/jinzhu/copier
+# JSON 库
+go get -u github.com/bytedance/sonic
 ```

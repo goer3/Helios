@@ -38,6 +38,11 @@ func Router() *gin.Engine {
 		// 系统路由前缀
 		systemRouterPrefix := path.Join(common.SYSTEM_API_PREFIX, "system")
 
+		// 注册系统配置路由，需要认证
+		systemSettingWithAuthRouterGroup := r.Group(path.Join(systemRouterPrefix, "setting"))
+		systemSettingWithAuthRouterGroup.Use(auth.MiddlewareFunc())
+		router.SystemSettingWithAuthRouter(systemSettingWithAuthRouterGroup, auth)
+
 		// 注册菜单路由，需要认证
 		systemMenuWithAuthRouterGroup := r.Group(path.Join(systemRouterPrefix, "menu"))
 		systemMenuWithAuthRouterGroup.Use(auth.MiddlewareFunc())

@@ -10,35 +10,39 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 为了避免因为处理异常导致程序 panic 退出，所以需要对 panic 进行封装，请求响应也通过 panic 方法处理
+// Exception 统一异常处理中间件。
+// 正常情况下，handler 通过 panic(response.Response{}) 返回响应内容；
+// 真正异常导致的 panic 会被捕获并返回 500，防止程序退出。
 func Exception(ctx *gin.Context) {
 	defer func() {
 		err := recover()
-		if err != nil {
-			stack := debug.Stack()
-			// 使用断言判断错误是用户定义的响应异常还是系统抛出的异常
-			resp, ok := err.(response.Response)
-			if !ok {
-				// 记录具体的 panic 错误信息
-				if common.SystemLog != nil {
-					common.SystemLog.Errorf("Panic: %v", err)
-					common.SystemLog.Error(string(stack))
-					_ = common.SystemLog.Sync()
-				} else {
-					fmt.Printf("Panic: %v\n%s", err, stack)
-				}
-				// 系统异常就响应用户服务器错误，避免值直接 panic 导致程序退出
-				resp = response.Response{
-					Code:    response.InternalServerError,
-					Message: response.ResponseMessage[response.InternalServerError],
-					Data:    map[string]any{},
-				}
-			}
-			// 无论请求是否成功，响应的状态码都应该是 200，都会有返回数据
+		if err == nil {
+			return
+		}
+
+		// 受控响应：handler 通过 panic(response.Response{}) 返回正常响应
+		if resp, ok := err.(response.Response); ok {
 			ctx.JSON(http.StatusOK, resp)
 			ctx.Abort()
 			return
 		}
+
+		// 真正异常：记录 stack trace 并返回 500
+		stack := debug.Stack()
+		if common.SystemLog != nil {
+			common.SystemLog.Errorf("Panic: %v", err)
+			common.SystemLog.Error(string(stack))
+			_ = common.SystemLog.Sync()
+		} else {
+			fmt.Printf("Panic: %v\n%s", err, stack)
+		}
+
+		ctx.JSON(http.StatusOK, response.Response{
+			Code:    response.InternalServerError,
+			Message: response.ResponseMessage[response.InternalServerError],
+			Data:    response.GetEmpty(),
+		})
+		ctx.Abort()
 	}()
 	ctx.Next()
 }

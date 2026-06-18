@@ -87,6 +87,9 @@ var startCmd = &cobra.Command{
 		// 3. 数据库初始化
 		initialize.MySQL()
 
+		// 6. 分页配置初始化
+		initialize.SystemPageSetting()
+
 		// 4. Redis 初始化
 		initialize.Redis()
 

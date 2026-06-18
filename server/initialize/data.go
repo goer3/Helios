@@ -61,13 +61,75 @@ func upsert[T any](db *gorm.DB, rows []T, label string) {
 	}
 }
 
-// 执行初始化 SQL 脚本 sql/init.sql
-func Data() {
-	initSystemMenuData()
-	initSystemRoleData()
-	initSystemUserData()
-	initSystemApiCategoryData()
-	initSystemApiData()
+// 执行数据初始化
+func Data(tableName string) {
+	if tableName == "all" {
+		initSystemSettingData()
+		initSystemMenuData()
+		initSystemRoleData()
+		initSystemUserData()
+		initSystemApiCategoryData()
+		initSystemApiData()
+		return
+	}
+	switch tableName {
+	case "system_setting":
+		initSystemSettingData()
+		return
+	case "system_menu":
+		initSystemMenuData()
+		return
+	case "system_role":
+		initSystemRoleData()
+		return
+	case "system_user":
+		initSystemUserData()
+		return
+	case "system_api_category":
+		initSystemApiCategoryData()
+		return
+	case "system_api":
+		initSystemApiData()
+		return
+	default:
+		common.SystemLog.Error(fmt.Sprintf("[错误] 未知数据表：%s", tableName))
+		return
+	}
+}
+
+// 配置初始化
+func initSystemSettingData() {
+	common.SystemLog.Info("开始初始化系统配置")
+	// 临时屏蔽日志
+	oldLogger := common.DB.Logger
+	common.DB.Logger = oldLogger.LogMode(logger.Silent)
+	defer func() { common.DB.Logger = oldLogger }()
+
+	// 如果数据存在，则跳过
+	var existing model.SystemSetting
+	if err := common.DB.Where("name = ?", common.SYSTEM_PAGE_SETTING_KEY).First(&existing).Error; err == nil {
+		common.SystemLog.Info("[跳过] 配置（数据分页）已存在")
+		return
+	}
+
+	// 分页数据
+	systemPageSettingJsonStr, err := utils.StructToJsonString(common.SystemPageSetting{
+		PageSize:    10,  // 默认每页数据量
+		MaxPageSize: 100, // 默认最大每页数据量
+	})
+	if err != nil {
+		common.SystemLog.Fatal(fmt.Sprintf("[失败] 转换数（数据分页）配置为 JSON 字符串：%s", err.Error()))
+	}
+	systemPageSetting := model.SystemSetting{
+		Name:        common.SYSTEM_PAGE_SETTING_KEY,
+		Description: "数据分页配置",
+		Value:       systemPageSettingJsonStr,
+	}
+	if err := common.DB.Create(&systemPageSetting).Error; err != nil {
+		common.SystemLog.Fatal(fmt.Sprintf("[失败] 配置（数据分页）到数据库：%s", err.Error()))
+	} else {
+		common.SystemLog.Info("[成功] 配置（数据分页）添加成功")
+	}
 }
 
 // 菜单初始化
@@ -171,15 +233,19 @@ func initSystemApiData() {
 		{Id: 2001, Name: "退出登录", Method: "POST", Api: "/api/v1/logout", IsAuthApi: 0, SystemApiCategoryId: 2000},
 		// 用户接口
 		{Id: 11001, Name: "获取用户列表", Method: "GET", Api: "/api/v1/system/user/list", IsAuthApi: 1, SystemApiCategoryId: 11000},
-		{Id: 11002, Name: "创建新用户", Method: "POST", Api: "/api/v1/system/user/create", IsAuthApi: 1, SystemApiCategoryId: 11000},
+		{Id: 11002, Name: "创建用户", Method: "POST", Api: "/api/v1/system/user/create", IsAuthApi: 1, SystemApiCategoryId: 11000},
 		// 菜单接口
 		{Id: 12001, Name: "获取菜单列表", Method: "GET", Api: "/api/v1/system/menu/list", IsAuthApi: 1, SystemApiCategoryId: 12000},
+		{Id: 12002, Name: "创建菜单", Method: "POST", Api: "/api/v1/system/menu/create", IsAuthApi: 1, SystemApiCategoryId: 12000},
 		// 角色接口
 		{Id: 13001, Name: "获取角色列表", Method: "GET", Api: "/api/v1/system/role/list", IsAuthApi: 1, SystemApiCategoryId: 13000},
+		{Id: 13002, Name: "创建角色", Method: "POST", Api: "/api/v1/system/role/create", IsAuthApi: 1, SystemApiCategoryId: 13000},
 		// API分类接口
 		{Id: 14001, Name: "获取API分类列表", Method: "GET", Api: "/api/v1/system/api-category/list", IsAuthApi: 1, SystemApiCategoryId: 14000},
+		{Id: 14002, Name: "创建API分类", Method: "POST", Api: "/api/v1/system/api-category/create", IsAuthApi: 1, SystemApiCategoryId: 14000},
 		// API接口
 		{Id: 15001, Name: "获取API接口列表", Method: "GET", Api: "/api/v1/system/api/list", IsAuthApi: 1, SystemApiCategoryId: 15000},
+		{Id: 15002, Name: "创建API接口", Method: "POST", Api: "/api/v1/system/api/create", IsAuthApi: 1, SystemApiCategoryId: 15000},
 	}
 	upsert(common.DB, api, "API")
 }

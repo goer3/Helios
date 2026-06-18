@@ -16,6 +16,8 @@ var (
 	ParamSystemListenPort = -1
 	// 服务默认配置文件，默认空字符串，不能设置默认值
 	ParamSystemConfigFile = ""
+	// 数据表名称，默认 all
+	ParamSystemMigrateTableName = "all"
 	// 服务是否参与领导者选举, 0-不参与，1-参与
 	ParamSystemRoleLeader = -1
 	// 服务是否开启工作节点角色, 0-不开启，1-开启

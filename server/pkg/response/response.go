@@ -49,6 +49,11 @@ type Response struct {
 // 没有数据的时候响应空的数据
 var empty = map[string]any{}
 
+// GetEmpty 返回空数据对象
+func GetEmpty() map[string]any {
+	return empty
+}
+
 // 响应方法
 func Result(code int, message string, data any) {
 	panic(Response{
