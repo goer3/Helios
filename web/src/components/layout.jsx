@@ -180,11 +180,6 @@ const dropdownItems = [
     icon: <CreditCardOutlined />
   },
   {
-    key: 'update',
-    label: '版本更新',
-    icon: <GithubOutlined />
-  },
-  {
     key: 'switchTheme',
     label: '切换主题',
     icon: <BgColorsOutlined />,
