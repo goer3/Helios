@@ -242,7 +242,6 @@ const AdminLayout = () => {
           {/* logo */}
           <div className="s-logo">
             <img src={collapsed ? LogoCollapsed : customTheme === 'light' ? LogoBlack : LogoWhite} alt="logo" />
-            {/* <span className="s-logo__title">Marinerx</span> */}
           </div>
           {/* 菜单 */}
           <div className="s-body">
@@ -304,24 +303,6 @@ const AdminLayout = () => {
           <Footer style={{ textAlign: 'center', lineHeight: '50px' }}>Ant Design ©2026 Created by Ant UED</Footer>
         </Layout>
       </Layout>
-      {/* 版本提示 */}
-      {showVersionTip && (
-        <div className="s-tips">
-          {/* 素材：https://octodex.github.com/ */}
-          {/* <img src="https://octodex.github.com/images/tentocats.jpg" /> */}
-          <span className="s-tips__title">💥 新版本已经准备就绪</span>
-          <div className="s-tips__content">
-            当前版本为 <b>v1.10</b>，最新版本 <b>{CURRENT_VERSION}</b>，你可以前往{' '}
-            <a style={{ color: 'red' }} href="">
-              <GithubOutlined />
-            </a>{' '}
-            下载最新版本完成更新。
-          </div>
-          <Button type="primary" block onClick={dismissVersionTip}>
-            我已知晓
-          </Button>
-        </div>
-      )}
     </>
   );
 };
