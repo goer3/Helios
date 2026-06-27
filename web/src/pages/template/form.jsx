@@ -1,5 +1,19 @@
 import { useState } from 'react';
-import { AutoComplete, Button, Cascader, Checkbox, Col, Form, Input, Slider, InputNumber, DatePicker, Row, Select, Space } from 'antd';
+import {
+  AutoComplete,
+  Button,
+  Cascader,
+  Checkbox,
+  Col,
+  Form,
+  Input,
+  Slider,
+  InputNumber,
+  DatePicker,
+  Row,
+  Select,
+  Space
+} from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import STextArea from '@/components/ui/s-textarea';
 import SCard from '@/components/ui/s-card';
@@ -118,7 +132,11 @@ const DonationInput = ({ id, value = {}, onChange }) => {
   return (
     <span id={id}>
       <Space.Compact block>
-        <InputNumber value={value.amount ?? amount} onChange={onAmountChange} style={{ width: '100%' }} />
+        <InputNumber
+          value={value.amount ?? amount}
+          onChange={onAmountChange}
+          style={{ width: '100%' }}
+        />
         <Select
           value={value.currency || currency}
           onChange={onCurrencyChange}
@@ -150,14 +168,7 @@ const TemplateForm = () => {
   const onFinish = values => {
     console.log('Received values of form: ', values);
   };
-  const [autoCompleteResult, setAutoCompleteResult] = useState([]);
-  const onWebsiteChange = value => {
-    setAutoCompleteResult(value ? ['.com', '.org', '.net'].map(domain => `${value}${domain}`) : []);
-  };
-  const websiteOptions = autoCompleteResult.map(website => ({
-    label: website,
-    value: website
-  }));
+
   return (
     <Row>
       <Col span={24}>
@@ -179,6 +190,7 @@ const TemplateForm = () => {
             <Form.Item
               name="email"
               label="E-mail"
+              colon={false}
               rules={[
                 {
                   type: 'email',
@@ -196,6 +208,7 @@ const TemplateForm = () => {
             <Form.Item
               name="password"
               label="Password"
+              colon={false}
               rules={[
                 {
                   required: true,
@@ -211,6 +224,7 @@ const TemplateForm = () => {
               name="confirm"
               label="Confirm Password"
               dependencies={['password']}
+              colon={false}
               hasFeedback
               rules={[
                 {
@@ -222,7 +236,9 @@ const TemplateForm = () => {
                     if (!value || getFieldValue('password') === value) {
                       return Promise.resolve();
                     }
-                    return Promise.reject(new Error('The new password that you entered do not match!'));
+                    return Promise.reject(
+                      new Error('The new password that you entered do not match!')
+                    );
                   }
                 })
               ]}
@@ -230,13 +246,19 @@ const TemplateForm = () => {
               <Input.Password />
             </Form.Item>
 
-            <Form.Item name="username" label="Username" rules={[{ required: true, message: 'Please input your Username!' }]}>
+            <Form.Item
+              name="username"
+              label="Username"
+              colon={false}
+              rules={[{ required: true, message: 'Please input your Username!' }]}
+            >
               <Input prefix={<UserOutlined />} placeholder="Username" />
             </Form.Item>
 
             <Form.Item
               name="nickname"
               label="Nickname"
+              colon={false}
               tooltip="What do you want others to call you?"
               rules={[{ required: true, message: 'Please input your nickname!', whitespace: true }]}
             >
@@ -246,6 +268,7 @@ const TemplateForm = () => {
             <Form.Item
               name="balance"
               label="Balance"
+              colon={false}
               tooltip="What do you want others to call you?"
               rules={[{ required: true, message: 'Please input your nickname!', whitespace: true }]}
             >
@@ -255,42 +278,64 @@ const TemplateForm = () => {
             <Form.Item
               name="residence"
               label="Habitual Residence"
-              rules={[{ type: 'array', required: true, message: 'Please select your habitual residence!' }]}
+              colon={false}
+              rules={[
+                { type: 'array', required: true, message: 'Please select your habitual residence!' }
+              ]}
             >
               <Cascader options={residences} />
             </Form.Item>
 
-            <Form.Item name="age" label="Age">
+            <Form.Item name="age" label="Age" colon={false}>
               <Slider defaultValue={30} />
             </Form.Item>
 
-            <Form.Item name="ageRange" label="Age Range">
+            <Form.Item name="ageRange" label="Age Range" colon={false}>
               <Slider range defaultValue={[20, 50]} />
             </Form.Item>
 
-            <Form.Item name="phone" label="Phone Number" rules={[{ required: true, message: 'Please input your phone number!' }]}>
+            <Form.Item
+              name="phone"
+              label="Phone Number"
+              colon={false}
+              rules={[{ required: true, message: 'Please input your phone number!' }]}
+            >
               <PhoneInput />
             </Form.Item>
 
-            <Form.Item name="donation" label="Donation" rules={[{ required: true, message: 'Please input donation amount!' }]}>
+            <Form.Item
+              name="donation"
+              label="Donation"
+              colon={false}
+              rules={[{ required: true, message: 'Please input donation amount!' }]}
+            >
               <DonationInput />
             </Form.Item>
 
-            <Form.Item name="website" label="Website" rules={[{ required: true, message: 'Please input website!' }]}>
-              <AutoComplete options={websiteOptions} onChange={onWebsiteChange} placeholder="website">
-                <Input />
-              </AutoComplete>
-            </Form.Item>
-
-            <Form.Item name="intro" label="Intro" rules={[{ required: true, message: 'Please input Intro' }]}>
+            <Form.Item
+              name="intro"
+              label="Intro"
+              colon={false}
+              rules={[{ required: true, message: 'Please input Intro' }]}
+            >
               <Input.TextArea autoSize={{ minRows: 5 }} showCount maxLength={100} />
             </Form.Item>
 
-            <Form.Item name="sIntro" label="Textarea" rules={[{ required: true, message: 'Please input Intro' }]}>
+            <Form.Item
+              name="sIntro"
+              label="Textarea"
+              colon={false}
+              rules={[{ required: true, message: 'Please input Intro' }]}
+            >
               <STextArea autoSize={{ minRows: 5 }} showCount maxLength={100} />
             </Form.Item>
 
-            <Form.Item name="gender" label="Gender" rules={[{ required: true, message: 'Please select gender!' }]}>
+            <Form.Item
+              name="gender"
+              label="Gender"
+              colon={false}
+              rules={[{ required: true, message: 'Please select gender!' }]}
+            >
               <Select
                 placeholder="select your gender"
                 defaultValue={'male'}
@@ -302,7 +347,7 @@ const TemplateForm = () => {
               />
             </Form.Item>
 
-            <Form.Item name="multipleSelect" label="Multiple Select">
+            <Form.Item name="multipleSelect" label="Multiple Select" colon={false}>
               <Select
                 mode="multiple"
                 allowClear
@@ -314,22 +359,40 @@ const TemplateForm = () => {
               />
             </Form.Item>
 
-            <Form.Item label="DatePicker" name="DatePicker" rules={[{ required: true, message: 'Please input!' }]}>
+            <Form.Item
+              label="DatePicker"
+              name="DatePicker"
+              colon={false}
+              rules={[{ required: true, message: 'Please input!' }]}
+            >
               <DatePicker />
             </Form.Item>
 
-            <Form.Item label="RangePicker" name="RangePicker" rules={[{ required: true, message: 'Please input!' }]}>
+            <Form.Item
+              label="RangePicker"
+              name="RangePicker"
+              colon={false}
+              rules={[{ required: true, message: 'Please input!' }]}
+            >
               <RangePicker />
             </Form.Item>
-            <Form.Item label="Captcha" extra="We must make sure that your are a human.">
+            <Form.Item
+              label="Captcha"
+              colon={false}
+              extra="We must make sure that your are a human."
+            >
               <Row gutter={8}>
                 <Col span={12}>
-                  <Form.Item name="captcha" noStyle rules={[{ required: true, message: 'Please input the captcha you got!' }]}>
+                  <Form.Item
+                    name="captcha"
+                    noStyle
+                    rules={[{ required: true, message: 'Please input the captcha you got!' }]}
+                  >
                     <Input />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Button>Get captcha</Button>
+                  <Button size="large">Get captcha</Button>
                 </Col>
               </Row>
             </Form.Item>
@@ -337,9 +400,11 @@ const TemplateForm = () => {
             <Form.Item
               name="agreement"
               valuePropName="checked"
+              colon={false}
               rules={[
                 {
-                  validator: (_, value) => (value ? Promise.resolve() : Promise.reject(new Error('Should accept agreement')))
+                  validator: (_, value) =>
+                    value ? Promise.resolve() : Promise.reject(new Error('Should accept agreement'))
                 }
               ]}
               {...tailFormItemLayout}

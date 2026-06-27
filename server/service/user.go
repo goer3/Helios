@@ -12,7 +12,7 @@ import (
 )
 
 // 创建用户
-func SystemUserCreate(req *dto.SystemUserCreateRequest) error {
+func UserCreate(req *dto.UserCreateRequest) error {
 	// 验证过期时间格式
 	var expireAt *carbon.Carbon
 	if req.ExpireAt != "" {
@@ -34,7 +34,7 @@ func SystemUserCreate(req *dto.SystemUserCreateRequest) error {
 	}
 
 	// 数据转换
-	var user = model.SystemUser{}
+	var user = model.User{}
 	if err := copier.Copy(&user, &req); err != nil {
 		common.SystemLog.Error("创建用户数据转换异常：", err)
 		return err

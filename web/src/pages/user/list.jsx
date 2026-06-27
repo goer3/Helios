@@ -5,10 +5,16 @@ import {
   PlusOutlined,
   CloudDownloadOutlined,
   SearchOutlined,
-  FileExcelOutlined,
-  BookOutlined
+  FileExcelOutlined
 } from '@ant-design/icons';
+import Helmet from 'react-helmet';
+import { TitleSuffix } from '@/components/text';
 import SCard from '@/components/ui/s-card';
+
+// 页面基础信息
+const pageTitle = '用户列表';
+const pageTitleEn = 'USER LIST';
+const pageDescription = 'Administrators can use this list to modify the personal information and permissions of specific users.';
 
 const columns = [
   {
@@ -40,8 +46,6 @@ const columns = [
         ]
       }
     ],
-    // specify the condition of filtering result
-    // here is that finding the name started with `value`
     onFilter: (value, record) => record.name.indexOf(value) === 0,
     fixed: 'start'
   },
@@ -142,46 +146,48 @@ const rowSelection = {
   })
 };
 
-const TemplateTable = () => {
+const UserList = () => {
   return (
-    <Row>
-      <Col span={24}>
-        <SCard
-          title="Table"
-          description="New design table based on Ant Design Table"
-        >
-          <div className="s-card__btn-group">
-            <Space>
-              <Button icon={<PlusOutlined />} type="primary">
-                添加数据
-              </Button>
-              <Input size="small" placeholder="支持模糊搜索" suffix={<SearchOutlined />} />
-            </Space>
-            <Space>
-              <Button icon={<CloudDownloadOutlined />}>下载模板</Button>
-              <Button icon={<FileExcelOutlined />}>导出数据</Button>
-            </Space>
-          </div>
-          <Table
-            bordered
-            columns={columns}
-            dataSource={dataSource}
-            scroll={{ x: 'max-content' }}
-            rowSelection={{ type: 'checkbox', ...rowSelection }}
-            expandable={{
-              expandedRowRender: record => <h1>Hello World</h1>,
-              rowExpandable: record => record.name !== 'Not Expandable'
-            }}
-            pagination={{
-              showTotal: (total, range) => `总共 ${total} 条记录`,
-              showSizeChanger: true,
-              showQuickJumper: true
-            }}
-          />
-        </SCard>
-      </Col>
-    </Row>
+    <>
+      <Helmet>
+        <title>{pageTitle} - {TitleSuffix}</title>
+      </Helmet>
+      <Row>
+        <Col span={24}>
+          <SCard title={`${pageTitle} / ${pageTitleEn}`} description={pageDescription}>
+            <div className="s-card__btn-group">
+              <Space>
+                <Button icon={<PlusOutlined />} type="primary">
+                  添加数据
+                </Button>
+                <Input size="small" placeholder="支持模糊搜索" suffix={<SearchOutlined />} />
+              </Space>
+              <Space>
+                <Button icon={<CloudDownloadOutlined />}>下载模板</Button>
+                <Button icon={<FileExcelOutlined />}>导出数据</Button>
+              </Space>
+            </div>
+            <Table
+              bordered
+              columns={columns}
+              dataSource={dataSource}
+              scroll={{ x: 'max-content' }}
+              rowSelection={{ type: 'checkbox', ...rowSelection }}
+              expandable={{
+                expandedRowRender: record => <h1>Hello World</h1>,
+                rowExpandable: record => record.name !== 'Not Expandable'
+              }}
+              pagination={{
+                showTotal: (total, range) => `总共 ${total} 条记录`,
+                showSizeChanger: true,
+                showQuickJumper: true
+              }}
+            />
+          </SCard>
+        </Col>
+      </Row>
+    </>
   );
 };
 
-export default TemplateTable;
+export default UserList;

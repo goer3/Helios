@@ -1,4 +1,3 @@
-// 底部授权
-const FooterText = 'ANTD SHADCN ADMIN WEB UI @2026 Created by DK';
+const TitleSuffix = 'Helios，一个非常牛逼的监控系统';
 
-export { FooterText };
+export { TitleSuffix };

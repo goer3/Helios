@@ -10,6 +10,7 @@ import (
 
 // 访问日志数据
 type RequestLog struct {
+	RequestId        string `json:"request_id"`
 	Method           string `json:"method"`
 	RequestURI       string `json:"request_uri"`
 	Status           int    `json:"status"`
@@ -24,6 +25,7 @@ func AccessLogger(ctx *gin.Context) {
 
 	// 收集日志数据
 	d := RequestLog{
+		RequestId:        ctx.Request.Header.Get("X-HELIOS-REQUEST-ID"),
 		Method:           ctx.Request.Method,
 		RequestURI:       ctx.Request.RequestURI,
 		Status:           ctx.Writer.Status(),
@@ -42,7 +44,8 @@ func AccessLogger(ctx *gin.Context) {
 			common.AccessLog.Infow("request", "data", d)
 		}
 	} else {
-		msg := fmt.Sprintf("%s\t%s\t%d\t%dms\t%s",
+		msg := fmt.Sprintf("%s\t%s\t%s\t%d\t%dms\t%s",
+			d.RequestId,
 			d.Method,
 			d.RequestURI,
 			d.Status,

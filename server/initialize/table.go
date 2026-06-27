@@ -91,9 +91,9 @@ func Table() {
 		&model.SystemMenu{},
 		&model.SystemApiCategory{},
 		&model.SystemApi{},
-		&model.SystemUser{},
-		&model.SystemUserExtraApi{},
-		&model.SystemUserExtraMenu{},
+		&model.User{},
+		&model.UserExtraApi{},
+		&model.UserExtraMenu{},
 	}
 
 	for _, m := range models {

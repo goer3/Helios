@@ -9,14 +9,7 @@ dayjs.locale('zh-cn');
 
 // 样式
 import 'antd/dist/antd.css';
-import '@/assets/css/light.less';
-
-// 默认主题
-let customTheme = localStorage.getItem('theme') || 'light';
-// 根据不同主题引入不同的样式
-if (customTheme === 'dark') {
-  import('@/assets/css/dark.less');
-}
+import '@/assets/css/theme.less';
 
 // 字体
 import 'misans/lib/Normal/MiSans-Regular.min.css';
@@ -25,76 +18,64 @@ import 'misans/lib/Normal/MiSans-Regular.min.css';
 import { BrowserRouter } from 'react-router-dom';
 import { GenerateRoutes } from '@/router/rules';
 
-// 颜色
-const customColorBlue = '#0052d9';
-const customColorLight = '#ffffff';
-const customColorDark = '#000000';
-const customColorLightGray = '#f4f4f4';
-const customColorFillGray = '#e5e5e5';
-const customColorGray = '#f7f8f9';
-
-// 通用样式
-const customControlHeight = 28;
-const customTableLineHeight = 32;
-const customPaddingInline = 10;
-const customMainBg = '#ffffff';
-
-// light 样式
-let customSiderBg = customColorGray;
-let customSiderColor = customColorDark;
-let customMenuItemSelectedColor = customColorDark;
-let customMenuItemSelectedBg = customColorFillGray;
-
-// dark 样式
-if (customTheme === 'dark') {
-  customSiderBg = customColorDark;
-  customSiderColor = customColorLight;
-  customMenuItemSelectedColor = '#ff0000';
-  customMenuItemSelectedBg = customSiderBg;
-}
+// 颜色定义
+const customColor = {
+  lightBgColor: '#f7f8f9',
+  blueColor: '#0052d9',
+  blueBgColor: '#e6f4ff',
+  borderColor: '#e5e5e5',
+  filledBgColor: '#e5e5e555',
+  errorColor: '#CC0033',
+  errorBgColor: '#ffe6e84a'
+};
 
 // 主题定制
 const themeConfig = {
   zeroRuntime: true,
   token: {
-    colorPrimary: customColorDark,
-    colorPrimaryHover: customColorDark,
-    colorLinkHover: customColorDark,
-    colorLink: customColorBlue,
-    controlItemBgActive: customColorLightGray,
-    controlItemBgHover: customColorLightGray,
-    lineHeight: '20px',
+    colorPrimary: '#000000',
     fontFamily: 'MiSans, serif',
     fontSize: 13,
-    controlInteractiveSize: 13,
-    borderRadius: 0
+    borderRadius: 0,
+    margin: 10,
+    marginXS: 5,
+    marginSM: 10,
+    marginMD: 15,
+    marginLG: 20,
+    paddingXS: 5,
+    paddingSM: 10,
+    padding: 10,
+    paddingMD: 15,
+    paddingLG: 20,
+    marginXL: 30,
+    paddingXL: 30,
+    marginXXL: 40,
+    colorError: customColor.errorColor,
+    colorErrorBg: customColor.errorBgColor,
+    colorErrorBgActive: customColor.errorBgColor,
+    colorErrorBgHover: customColor.errorBgColor,
+    lineHeight: '20px',
+    controlHeight: 28,
+    colorLink: customColor.blueColor
   },
   components: {
     Layout: {
-      headerBg: customMainBg,
-      headerPadding: 0,
-      bodyBg: customMainBg,
-      footerBg: customMainBg,
+      headerBg: '#ffffff',
+      bodyBg: '#ffffff',
+      footerBg: '#ffffff',
       footerPadding: 0,
       headerHeight: 50,
-      siderBg: customSiderBg
+      headerPadding: '0 10px'
     },
-    Menu: {
-      iconSize: 13,
-      collapsedIconSize: 16,
-      itemColor: customSiderColor,
-      itemHeight: 30,
-      itemBg: customSiderBg,
-      subMenuItemBg: customSiderBg,
-      subMenuItemSelectedColor: customSiderColor,
-      itemMarginInline: 20,
-      itemPaddingInline: 0,
-      itemMarginBlock: 4,
-      itemActiveBg: customSiderBg,
-      itemSelectedBg: customMenuItemSelectedBg,
-      itemSelectedColor: customMenuItemSelectedColor,
-      itemHoverColor: customSiderColor,
-      dropdownWidth: 'auto'
+    Dropdown: {
+      paddingBlock: 5, // 菜单内边距垂直
+      controlPaddingHorizontal: 15, // 菜单内边距水平
+      lineHeight: '20px', // 菜单高度
+      fontSizeSM: 13, // 图标字体大小
+      marginXS: 10, // 图标和文字距离
+      controlItemBgActive: customColor.filledBgColor,
+      controlItemBgActiveHover: customColor.filledBgColor,
+      controlItemBgHover: customColor.filledBgColor
     },
     Button: {
       contentFontSize: 12,
@@ -102,26 +83,53 @@ const themeConfig = {
       defaultShadow: 'none',
       primaryShadow: 'none',
       dangerShadow: 'none',
-      controlHeight: customControlHeight,
-      controlHeightSM: 24,
-      paddingInline: customPaddingInline,
-      paddingInlineSM: customPaddingInline,
-      blue6: customColorBlue
+      controlHeightSM: 20,
+      controlHeight: 26,
+      controlHeightLG: 28,
+      paddingInline: 10,
+      paddingInlineSM: 5,
+      colorLink: customColor.blueColor,
+      colorLinkHover: customColor.blueColor,
+      colorLinkActive: customColor.blueColor,
+      colorPrimary: customColor.blueColor,
+      colorPrimaryActive: customColor.blueColor,
+      colorPrimaryBg: customColor.blueBgColor,
+      colorPrimaryBgHover: customColor.blueBgColor,
+      colorPrimaryBorder: customColor.blueBgColor,
+      colorPrimaryHover: customColor.blueColor,
+      // 错误按钮样式
+      colorErrorBgFilledHover: customColor.errorBgColor,
+      colorErrorBgFilledHover: customColor.errorBgColor,
+      colorErrorBgActive: customColor.errorBgColor,
+      colorErrorActive: customColor.errorColor,
+      colorErrorHover: customColor.errorColor,
+      // 普通按钮样式
+      colorBgSolidActive: '#000000',
+      colorBgSolidHover: '#000000',
+      // 普通按钮填充颜色
+      colorFill: 'rgba(0,0,0,0.04)',
+      colorFillSecondary: 'rgba(0,0,0,0.04)',
+      colorFillTertiary: 'rgba(0,0,0,0.04)',
+      blue6: customColor.blueColor
     },
     Form: {
-      labelHeight: customControlHeight
+      labelHeight: 28,
+      controlHeight: 28,
+      lineHeight: '28px'
     },
     Input: {
       activeShadow: 'none',
       errorActiveShadow: 'none',
       warningActiveShadow: 'none',
-      controlHeight: customControlHeight,
-      activeBorderColor: customColorFillGray,
-      paddingBlockSM: 4
+      activeBorderColor: customColor.borderColor,
+      hoverBorderColor: customColor.borderColor,
+      paddingBlock: 3.43,
+      paddingBlockSM: 2.43,
+      paddingInline: 10,
+      paddingInlineSM: 10
     },
     InputNumber: {
-      controlHeight: customControlHeight,
-      activeBorderColor: customColorFillGray
+      activeBorderColor: customColor.borderColor
     },
     Slider: {
       railSize: 8,
@@ -129,30 +137,42 @@ const themeConfig = {
       handleLineWidth: 1
     },
     Select: {
-      optionHeight: customControlHeight,
-      optionLineHeight: customControlHeight + 'px',
-      optionPadding: '0 10px',
-      optionSelectedBg: customColorFillGray
+      optionPadding: '3px 10px',
+      optionSelectedBg: customColor.filledBgColor,
+      controlItemBgActiveHover: customColor.filledBgColor,
+      multipleItemHeight: 20
+    },
+    Cascader: {
+      optionPadding: '3px 10px',
+      optionSelectedBg: customColor.filledBgColor
+    },
+    DatePicker: {
+      paddingBlock: 3.43,
+      paddingInline: 10,
+      activeBorderColor: customColor.borderColor,
+      cellActiveWithRangeBg: customColor.borderColor
     },
     Table: {
-      lineHeight: customTableLineHeight + 'px',
-      cellPaddingInline: customPaddingInline,
-      cellPaddingBlock: 0
+      lineHeight: '32px',
+      cellPaddingInline: 10,
+      cellPaddingBlock: 0,
+      rowSelectedBg: customColor.lightBgColor,
+      colorLinkHover: customColor.blueColor
     },
     Pagination: {
       itemSize: 20,
       itemActiveBg: 'transparent',
-      itemActiveColor: 'red',
-      itemActiveColorHover: 'red'
+      itemActiveColor: customColor.errorColor,
+      itemActiveColorHover: customColor.errorColor
     },
-    Dropdown: {
-      paddingBlock: 5
+    Message: {
+      contentPadding: '5px 10px',
     }
   }
 };
 
 createRoot(document.getElementById('root')).render(
-  <ConfigProvider locale={zhCN} theme={themeConfig}>
+  <ConfigProvider locale={zhCN} theme={themeConfig} message={{ duration: 3 }}>
     <App>
       <BrowserRouter>
         <GenerateRoutes />

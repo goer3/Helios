@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { GetToken } from '@/utils/token';
 
 // 默认 Axios 配置
 const defaultConfig = {
@@ -35,7 +36,7 @@ class HttpClient {
     // 请求拦截器
     this.instance.interceptors.request.use(
       config => {
-        const token = localStorage.getItem('token');
+        const token = GetToken();
         if (token) {
           // 往 Header 中添加 Authorization Token
           config.headers.Authorization = `Bearer ${token}`;
@@ -72,7 +73,9 @@ class HttpClient {
 
   // 生成请求唯一标识，用于日志追踪
   generateRequestId() {
-    return 'REQ-' + Date.now().toString(36) + Math.random().toString(36).substring(2, 8).toUpperCase();
+    // 时间戳（13位）+ 7位随机数 = 20位
+    const rand = String(Math.floor(Math.random() * 10000000)).padStart(7, '0');
+    return `REQ-${Date.now()}${rand}`;
   }
 
   // 通用请求方法
@@ -91,33 +94,33 @@ class HttpClient {
   }
 
   // GET 请求
-  get(url, config) {
+  GET(url, config) {
     return this.request('get', url, config);
   }
 
   // POST 请求
-  post(url, data, config) {
+  POST(url, data, config) {
     return this.request('post', url, { ...config, data });
   }
 
   // PUT 请求
-  put(url, data, config) {
+  PUT(url, data, config) {
     return this.request('put', url, { ...config, data });
   }
 
   // DELETE 请求
-  delete(url, config) {
+  DELETE(url, config) {
     return this.request('delete', url, config);
   }
 
   // PATCH 请求
-  patch(url, data, config) {
+  PATCH(url, data, config) {
     return this.request('patch', url, { ...config, data });
   }
 }
 
 // 导出默认实例
-const http = new HttpClient();
+const HTTP = new HttpClient();
 
 export { HttpClient };
-export default http;
+export default HTTP;

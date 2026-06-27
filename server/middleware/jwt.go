@@ -53,16 +53,16 @@ func JWTAuth() (*jwt.GinJWTMiddleware, error) {
 func loginHandler(ctx *gin.Context) (id uint, err error) {
 	// 获取请求体中的用户名和密码
 	var req dto.LoginRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	if err = ctx.ShouldBindJSON(&req); err != nil {
 		msg := utils.GetValidateErrorMessage(err, &req)
 		common.SystemLog.Error("绑定请求体失败：", msg)
 		return 0, errors.New(msg)
 	}
 
 	// 获取用户
-	var user model.SystemUser
-	if err = common.DB.Model(&model.SystemUser{}).
-		Where("username = ?", req.Username).
+	var user model.User
+	if err = common.DB.Model(&model.User{}).
+		Where("username = ? OR mobile = ? OR email = ?", req.Account, req.Account, req.Account).
 		First(&user).Error; err != nil {
 		common.SystemLog.Error("查询用户信息失败：", err.Error())
 		return 0, err
@@ -123,8 +123,8 @@ func authenticator(ctx *gin.Context) (any, error) {
 	}
 
 	// 查询用户信息
-	var user model.SystemUser
-	if err = common.DB.Model(&model.SystemUser{}).
+	var user model.User
+	if err = common.DB.Model(&model.User{}).
 		Where("id = ?", id).
 		Preload("SystemRole").
 		First(&user).Error; err != nil {
@@ -137,7 +137,7 @@ func authenticator(ctx *gin.Context) (any, error) {
 
 // 登录中处理 Token 中内容的回调函数
 func payloadFunc(data any) gojwt.MapClaims {
-	if v, ok := data.(*model.SystemUser); ok {
+	if v, ok := data.(*model.User); ok {
 		// 自定义需要将哪些数据放到 Token 中，注意不要放敏感数据，因为 Token 是可以被解密的
 		return gojwt.MapClaims{
 			"identityKey": v.Id,
@@ -187,7 +187,7 @@ func logoutResponse(ctx *gin.Context) {
 // 已经登录后，解析每次请求中带的 Token 内容的回调函数
 func identityHandler(ctx *gin.Context) any {
 	claims := jwt.ExtractClaims(ctx)
-	return &model.SystemUser{
+	return &model.User{
 		BaseModel: model.BaseModel{
 			Id: uint(claims["id"].(float64)),
 		},
@@ -197,7 +197,7 @@ func identityHandler(ctx *gin.Context) any {
 // 已经登录后，验证每次请求中带的 Token 是否有效的回调函数
 func authorizer(ctx *gin.Context, data any) bool {
 	// 新增和 Redis 中 Token 的对比逻辑
-	if v, ok := data.(*model.SystemUser); ok && v.Id != 0 {
+	if v, ok := data.(*model.User); ok && v.Id != 0 {
 		return true
 	}
 	return false

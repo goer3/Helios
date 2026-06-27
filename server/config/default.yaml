@@ -74,7 +74,7 @@ mysql:
   # 主机地址
   host: mysql.helios.com
   # 端口
-  port: 13306
+  port: 3306
   # 数据库
   database: helios
   # 用户名
@@ -97,9 +97,9 @@ redis:
   # 主机地址
   host: redis.helios.com
   # 端口
-  port: 16379
+  port: 6379
   # 数据库
-  database: 0
+  database: 10
   # 密码，没有就不设置
   password: ""
   # 连接超时时间，单位秒

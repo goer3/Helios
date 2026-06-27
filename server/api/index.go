@@ -1,6 +1,7 @@
 package api
 
 import (
+	"Helios/pkg/response"
 	"Helios/pkg/utils"
 
 	"github.com/gin-gonic/gin"
@@ -14,4 +15,9 @@ func BindAndValidate(ctx *gin.Context, req any) (ok bool, msg string) {
 		return false, msg
 	}
 	return true, ""
+}
+
+// Token 验证接口
+func TokenVerifyHandler(ctx *gin.Context) {
+	response.Success()
 }

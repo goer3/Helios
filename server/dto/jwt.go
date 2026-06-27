@@ -2,7 +2,7 @@ package dto
 
 // 用户登录请求参数
 type LoginRequest struct {
-	Username string `json:"username" form:"username" binding:"required"`
+	Account  string `json:"account" form:"account" binding:"required"`
 	Password string `json:"password" form:"password" binding:"required"`
 }
 

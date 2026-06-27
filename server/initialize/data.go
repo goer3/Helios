@@ -30,7 +30,7 @@ func upsert[T any](db *gorm.DB, rows []T, label string) {
 		case model.SystemRole:
 			id = v.Id
 			name = v.Name
-		case model.SystemUser:
+		case model.User:
 			id = v.Id
 			name = v.Nickname
 		case model.SystemApiCategory:
@@ -67,9 +67,9 @@ func Data(tableName string) {
 		initSystemSettingData()
 		initSystemMenuData()
 		initSystemRoleData()
-		initSystemUserData()
 		initSystemApiCategoryData()
 		initSystemApiData()
+		initUserData()
 		return
 	}
 	switch tableName {
@@ -82,14 +82,14 @@ func Data(tableName string) {
 	case "system_role":
 		initSystemRoleData()
 		return
-	case "system_user":
-		initSystemUserData()
-		return
 	case "system_api_category":
 		initSystemApiCategoryData()
 		return
 	case "system_api":
 		initSystemApiData()
+		return
+	case "user":
+		initUserData()
 		return
 	default:
 		common.SystemLog.Error(fmt.Sprintf("[错误] 未知数据表：%s", tableName))
@@ -140,9 +140,9 @@ func initSystemMenuData() {
 		{Id: 10000, Name: "数据查询", Path: "/query", Icon: "FundOutlined", ParentId: 0},
 		{Id: 20000, Name: "数据来源", Path: "/datasource", Icon: "HddOutlined", ParentId: 0},
 		{Id: 30000, Name: "监控告警", Path: "/alarm", Icon: "AlertOutlined", ParentId: 0},
-		{Id: 31000, Name: "告警事件", Path: "/alarm/events", Icon: "ExceptionOutlined", ParentId: 30000},
-		{Id: 32000, Name: "告警策略", Path: "/alarm/rules", Icon: "BorderlessTableOutlined", ParentId: 30000},
-		{Id: 33000, Name: "屏蔽策略", Path: "/alarm/shielding", Icon: "AudioMutedOutlined", ParentId: 30000},
+		{Id: 31000, Name: "告警事件", Path: "/alarm/event", Icon: "ExceptionOutlined", ParentId: 30000},
+		{Id: 32000, Name: "告警策略", Path: "/alarm/rule", Icon: "BorderlessTableOutlined", ParentId: 30000},
+		{Id: 33000, Name: "屏蔽策略", Path: "/alarm/suppression-rule", Icon: "AudioMutedOutlined", ParentId: 30000},
 		{Id: 34000, Name: "告警历史", Path: "/alarm/history", Icon: "FieldTimeOutlined", ParentId: 30000},
 		{Id: 34100, Name: "等待处理", Path: "/alarm/history/todo", Icon: "WarningTwoTone", ParentId: 34000},
 		{Id: 34200, Name: "完成处理", Path: "/alarm/history/finish", Icon: "CheckOutlined", ParentId: 34000},
@@ -151,9 +151,9 @@ func initSystemMenuData() {
 		{Id: 42000, Name: "通知模板", Path: "/message/template", Icon: "SnippetsOutlined", ParentId: 40000},
 		{Id: 50000, Name: "人员组织", Path: "/user", Icon: "UsergroupAddOutlined", ParentId: 0},
 		{Id: 51000, Name: "用户列表", Path: "/user/list", Icon: "SolutionOutlined", ParentId: 50000},
-		{Id: 52000, Name: "用户分组", Path: "/user/groups", Icon: "CommentOutlined", ParentId: 50000},
-		{Id: 53000, Name: "项目团队", Path: "/user/projects", Icon: "ClusterOutlined", ParentId: 50000},
-		{Id: 54000, Name: "人员排班", Path: "/user/scheduling", Icon: "CalendarOutlined", ParentId: 50000},
+		{Id: 52000, Name: "用户分组", Path: "/user/group", Icon: "CommentOutlined", ParentId: 50000},
+		{Id: 53000, Name: "项目团队", Path: "/user/project", Icon: "ClusterOutlined", ParentId: 50000},
+		{Id: 54000, Name: "人员排班", Path: "/user/duty-roster", Icon: "CalendarOutlined", ParentId: 50000},
 		{Id: 90000, Name: "系统设置", Path: "/system", Icon: "SlidersOutlined", ParentId: 0},
 		{Id: 91000, Name: "角色授权", Path: "/system/role", Icon: "IdcardOutlined", ParentId: 90000},
 		{Id: 92000, Name: "菜单配置", Path: "/system/menu", Icon: "SisternodeOutlined", ParentId: 90000},
@@ -174,32 +174,6 @@ func initSystemRoleData() {
 	upsert(common.DB, roles, "角色")
 }
 
-// 用户初始化
-func initSystemUserData() {
-	common.SystemLog.Info("开始初始化系统用户")
-	password, err := utils.PasswordEncrypt("helios")
-	if err != nil {
-		common.SystemLog.Error("[失败] 加密系统用户密码失败：" + err.Error())
-		return
-	}
-	users := []model.SystemUser{
-		{
-			BaseModel:    model.BaseModel{Id: 1},
-			Nickname:     "超管",
-			Username:     "helios",
-			Mobile:       "18888888888",
-			HideMobile:   1,
-			Email:        "helios@helios.com",
-			Password:     password,
-			Gender:       1,
-			AvatarUrl:    "https://github.com/shadcn.png",
-			ExpireAt:     carbon.Now().AddYears(1000),
-			SystemRoleId: 1,
-		},
-	}
-	upsert(common.DB, users, "用户")
-}
-
 // API 分类初始化
 func initSystemApiCategoryData() {
 	common.SystemLog.Info("开始初始化系统API分类")
@@ -209,12 +183,14 @@ func initSystemApiCategoryData() {
 		// 免授权接口
 		{Id: 2000, Name: "免授权接口", ParentId: 0},
 		// 系统接口
-		{Id: 10000, Name: "系统接口", ParentId: 0},
-		{Id: 11000, Name: "用户接口", ParentId: 10000},
-		{Id: 12000, Name: "菜单接口", ParentId: 10000},
-		{Id: 13000, Name: "角色接口", ParentId: 10000},
-		{Id: 14000, Name: "API分类接口", ParentId: 10000},
-		{Id: 15000, Name: "API接口", ParentId: 10000},
+		{Id: 10000, Name: "系统模块", ParentId: 0},
+		{Id: 11000, Name: "菜单接口", ParentId: 10000},
+		{Id: 12000, Name: "角色接口", ParentId: 10000},
+		{Id: 13000, Name: "API分类接口", ParentId: 10000},
+		{Id: 14000, Name: "API接口", ParentId: 10000},
+		{Id: 19000, Name: "系统设置接口", ParentId: 100000},
+		{Id: 20000, Name: "用户模块", ParentId: 0},
+		{Id: 21000, Name: "用户接口", ParentId: 20000},
 	}
 	upsert(common.DB, apiCategories, "API分类")
 }
@@ -231,21 +207,49 @@ func initSystemApiData() {
 		{Id: 1005, Name: "企业微信扫码登录", Method: "POST", Api: "/openapi/v1/login/wechat", IsAuthApi: 0, SystemApiCategoryId: 1000},
 		// 免授权接口
 		{Id: 2001, Name: "退出登录", Method: "POST", Api: "/api/v1/logout", IsAuthApi: 0, SystemApiCategoryId: 2000},
-		// 用户接口
-		{Id: 11001, Name: "获取用户列表", Method: "GET", Api: "/api/v1/system/user/list", IsAuthApi: 1, SystemApiCategoryId: 11000},
-		{Id: 11002, Name: "创建用户", Method: "POST", Api: "/api/v1/system/user/create", IsAuthApi: 1, SystemApiCategoryId: 11000},
 		// 菜单接口
-		{Id: 12001, Name: "获取菜单列表", Method: "GET", Api: "/api/v1/system/menu/list", IsAuthApi: 1, SystemApiCategoryId: 12000},
-		{Id: 12002, Name: "创建菜单", Method: "POST", Api: "/api/v1/system/menu/create", IsAuthApi: 1, SystemApiCategoryId: 12000},
+		{Id: 11001, Name: "获取菜单列表", Method: "GET", Api: "/api/v1/system/menu/list", IsAuthApi: 1, SystemApiCategoryId: 11000},
+		{Id: 11002, Name: "创建菜单", Method: "POST", Api: "/api/v1/system/menu/create", IsAuthApi: 1, SystemApiCategoryId: 11000},
 		// 角色接口
-		{Id: 13001, Name: "获取角色列表", Method: "GET", Api: "/api/v1/system/role/list", IsAuthApi: 1, SystemApiCategoryId: 13000},
-		{Id: 13002, Name: "创建角色", Method: "POST", Api: "/api/v1/system/role/create", IsAuthApi: 1, SystemApiCategoryId: 13000},
+		{Id: 12001, Name: "获取角色列表", Method: "GET", Api: "/api/v1/system/role/list", IsAuthApi: 1, SystemApiCategoryId: 12000},
+		{Id: 12002, Name: "创建角色", Method: "POST", Api: "/api/v1/system/role/create", IsAuthApi: 1, SystemApiCategoryId: 12000},
 		// API分类接口
-		{Id: 14001, Name: "获取API分类列表", Method: "GET", Api: "/api/v1/system/api-category/list", IsAuthApi: 1, SystemApiCategoryId: 14000},
-		{Id: 14002, Name: "创建API分类", Method: "POST", Api: "/api/v1/system/api-category/create", IsAuthApi: 1, SystemApiCategoryId: 14000},
+		{Id: 13001, Name: "获取API分类列表", Method: "GET", Api: "/api/v1/system/api-category/list", IsAuthApi: 1, SystemApiCategoryId: 13000},
+		{Id: 13002, Name: "创建API分类", Method: "POST", Api: "/api/v1/system/api-category/create", IsAuthApi: 1, SystemApiCategoryId: 13000},
 		// API接口
-		{Id: 15001, Name: "获取API接口列表", Method: "GET", Api: "/api/v1/system/api/list", IsAuthApi: 1, SystemApiCategoryId: 15000},
-		{Id: 15002, Name: "创建API接口", Method: "POST", Api: "/api/v1/system/api/create", IsAuthApi: 1, SystemApiCategoryId: 15000},
+		{Id: 14001, Name: "获取API接口列表", Method: "GET", Api: "/api/v1/system/api/list", IsAuthApi: 1, SystemApiCategoryId: 14000},
+		{Id: 14002, Name: "创建API接口", Method: "POST", Api: "/api/v1/system/api/create", IsAuthApi: 1, SystemApiCategoryId: 14000},
+		// 系统设置
+		{Id: 19001, Name: "获取系统设置列表", Method: "GET", Api: "/api/v1/system/setting/list", IsAuthApi: 1, SystemApiCategoryId: 19000},
+		// 用户接口
+		{Id: 21001, Name: "获取用户列表", Method: "GET", Api: "/api/v1/user/list", IsAuthApi: 1, SystemApiCategoryId: 21000},
+		{Id: 21002, Name: "创建用户", Method: "POST", Api: "/api/v1/user/create", IsAuthApi: 1, SystemApiCategoryId: 21000},
 	}
 	upsert(common.DB, api, "API")
+}
+
+// 用户初始化
+func initUserData() {
+	common.SystemLog.Info("开始初始化用户")
+	password, err := utils.PasswordEncrypt("helios")
+	if err != nil {
+		common.SystemLog.Error("[失败] 加密用户密码失败：" + err.Error())
+		return
+	}
+	users := []model.User{
+		{
+			BaseModel:    model.BaseModel{Id: 1},
+			Nickname:     "超管",
+			Username:     "helios",
+			Mobile:       "18888888888",
+			HideMobile:   1,
+			Email:        "helios@helios.com",
+			Password:     password,
+			Gender:       1,
+			AvatarUrl:    "https://github.com/shadcn.png",
+			ExpireAt:     carbon.Now().AddYears(1000),
+			SystemRoleId: 1,
+		},
+	}
+	upsert(common.DB, users, "用户")
 }

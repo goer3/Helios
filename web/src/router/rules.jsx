@@ -1,7 +1,7 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 import RouteLazyLoad from '@/router/lazyload';
 import AdminLayout from '@/components/layout';
-import ErrorLayout from '@/components/error';
+import LoginAndErrorLayout from '@/components/login-and-error-layout';
 
 // 路由列表
 export const RouteRules = [
@@ -16,6 +16,36 @@ export const RouteRules = [
       {
         path: '/dashboard',
         element: RouteLazyLoad(() => import('@/pages/dashboard/dashboard'))
+      },
+      {
+        path: '/user',
+        children: [
+          {
+            path: '/user/list',
+            element: RouteLazyLoad(() => import('@/pages/user/list'))
+          },
+          {
+            path: '/user/group',
+            element: RouteLazyLoad(() => import('@/pages/user/group'))
+          },
+          {
+            path: '/user/project',
+            element: RouteLazyLoad(() => import('@/pages/user/project'))
+          },
+          {
+            path: '/user/duty-roster',
+            element: RouteLazyLoad(() => import('@/pages/user/duty-roster'))
+          }
+        ]
+      },
+      {
+        path: '/system',
+        children: [
+          {
+            path: '/system/menu',
+            element: RouteLazyLoad(() => import('@/pages/system/menu'))
+          }
+        ]
       },
       {
         path: '/template',
@@ -37,12 +67,29 @@ export const RouteRules = [
     ]
   },
   {
-    path: '/error',
-    element: <ErrorLayout />,
+    path: '/',
+    element: <LoginAndErrorLayout />,
     children: [
       {
-        path: '/error/404',
-        element: RouteLazyLoad(() => import('@/pages/error/404'))
+        path: '/login',
+        element: RouteLazyLoad(() => import('@/pages/login/login'))
+      },
+      {
+        path: '/error',
+        children: [
+          {
+            path: '/error/403',
+            element: RouteLazyLoad(() => import('@/pages/error/403'))
+          },
+          {
+            path: '/error/404',
+            element: RouteLazyLoad(() => import('@/pages/error/404'))
+          },
+          {
+            path: '/error/500',
+            element: RouteLazyLoad(() => import('@/pages/error/500'))
+          }
+        ]
       }
     ]
   },

@@ -11,9 +11,9 @@ import (
 )
 
 // 获取用户列表
-func SystemUserListHandler(ctx *gin.Context) {
+func UserListHandler(ctx *gin.Context) {
 	var title string = "获取用户列表"
-	var list []model.SystemUser
+	var list []model.User
 
 	// TODO: 实现分页和查询条件
 	if err := common.DB.Preload("SystemRole").Find(&list).Error; err != nil {
@@ -27,14 +27,14 @@ func SystemUserListHandler(ctx *gin.Context) {
 }
 
 // 创建用户
-func SystemUserCreateHandler(ctx *gin.Context) {
+func UserCreateHandler(ctx *gin.Context) {
 	var title string = "创建用户"
-	var req dto.SystemUserCreateRequest
+	var req dto.UserCreateRequest
 	if ok, msg := BindAndValidate(ctx, &req); !ok {
 		response.FailureWithMessage(msg)
 		return
 	}
-	if err := service.SystemUserCreate(&req); err != nil {
+	if err := service.UserCreate(&req); err != nil {
 		response.FailureWithMessage(err.Error())
 		return
 	}

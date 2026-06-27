@@ -1,7 +1,7 @@
 package dto
 
 // 用户创建请求 - 必填字段用非指针类型
-type SystemUserCreateRequest struct {
+type UserCreateRequest struct {
 	Nickname     string `json:"nickname" binding:"required,min=2,max=50" msg:"昵称不能为空，长度必须在2-50之间"`
 	Username     string `json:"username" binding:"required,min=2,max=50" msg:"用户名不能为空，长度必须在2-50之间"`
 	Password     string `json:"password" binding:"required,min=6,max=128" msg:"密码不能为空，长度必须在6-128之间"`

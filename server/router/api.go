@@ -7,6 +7,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// 其他路由，需要认证
+func OtherAuthRouter(rg *gin.RouterGroup, auth *jwt.GinJWTMiddleware) gin.IRoutes {
+	rg.GET("/token-verify", api.TokenVerifyHandler) // 验证 token
+	return rg
+}
+
 // 系统配置路由，需要认证
 func SystemSettingWithAuthRouter(rg *gin.RouterGroup, auth *jwt.GinJWTMiddleware) gin.IRoutes {
 	rg.GET("/list", api.SystemSettingListHandler) // 获取系统配置列表
@@ -27,13 +33,6 @@ func SystemMenuWithAuthRouter(rg *gin.RouterGroup, auth *jwt.GinJWTMiddleware) g
 	return rg
 }
 
-// 用户路由，需要认证
-func SystemUserWithAuthRouter(rg *gin.RouterGroup, auth *jwt.GinJWTMiddleware) gin.IRoutes {
-	rg.GET("/list", api.SystemUserListHandler)      // 获取用户列表
-	rg.POST("/create", api.SystemUserCreateHandler) // 创建用户
-	return rg
-}
-
 // API 分类路由，需要认证
 func SystemApiCategoryWithAuthRouter(rg *gin.RouterGroup, auth *jwt.GinJWTMiddleware) gin.IRoutes {
 	rg.GET("/list", api.SystemApiCategoryListHandler)      // 获取API分类列表
@@ -45,5 +44,12 @@ func SystemApiCategoryWithAuthRouter(rg *gin.RouterGroup, auth *jwt.GinJWTMiddle
 func SystemApiWithAuthRouter(rg *gin.RouterGroup, auth *jwt.GinJWTMiddleware) gin.IRoutes {
 	rg.GET("/list", api.SystemApiListHandler)      // 获取API列表
 	rg.POST("/create", api.SystemApiCreateHandler) // 创建API
+	return rg
+}
+
+// 用户路由，需要认证
+func UserWithAuthRouter(rg *gin.RouterGroup, auth *jwt.GinJWTMiddleware) gin.IRoutes {
+	rg.GET("/list", api.UserListHandler)      // 获取用户列表
+	rg.POST("/create", api.UserCreateHandler) // 创建用户
 	return rg
 }
