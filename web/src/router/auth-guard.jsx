@@ -6,8 +6,8 @@ import { SYSTEM_BACKEND_API } from '@/config';
 import HTTP from '@/utils/axios';
 
 // 路由守卫组件
-// requireAuth=true (默认): 未登录 → /login，保护需要登录的页面
-// requireAuth=false: 已登录 → /dashboard，保护登录页等访客页面
+// requireAuth=true (默认): 未登录 → /login，只有登录后才能访问的页面
+// requireAuth=false: 已登录 → /dashboard，登录和没登录都能访问的页面，但是检测到已经登录后会跳转到 /dashboard
 const AuthGuard = ({ children, requireAuth = true }) => {
   const [verified, setVerified] = useState(null); // null=验证中, true=通过, false=未登录
   const location = useLocation();
