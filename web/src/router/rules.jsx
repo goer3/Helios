@@ -73,7 +73,7 @@ export const RouteRules = [
     children: [
       {
         path: '/login',
-        element: RouteLazyLoad(() => import('@/pages/login/login'))
+        element: <AuthGuard requireAuth={false}>{RouteLazyLoad(() => import('@/pages/login/login'))}</AuthGuard>
       },
       {
         path: '/error',

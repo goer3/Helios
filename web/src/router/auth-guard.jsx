@@ -5,26 +5,26 @@ import { GetToken } from '@/utils/token';
 import { SYSTEM_BACKEND_API } from '@/config';
 import HTTP from '@/utils/axios';
 
-// 路由守卫组件，用于验证用户是否登录
-const AuthGuard = ({ children }) => {
-  const [verified, setVerified] = useState(null); // null=验证中, true=通过, false=失败
+// 路由守卫组件
+// requireAuth=true (默认): 未登录 → /login，保护需要登录的页面
+// requireAuth=false: 已登录 → /dashboard，保护登录页等访客页面
+const AuthGuard = ({ children, requireAuth = true }) => {
+  const [verified, setVerified] = useState(null); // null=验证中, true=通过, false=未登录
   const location = useLocation();
 
   useEffect(() => {
     const checkAuth = async () => {
       const token = GetToken();
+      // 无本地 token，直接判定未登录
       if (!token) {
         setVerified(false);
         return;
       }
 
+      // 有本地 token，请求后端验证 token 是否有效（服务端可能已主动失效）
       try {
         const res = await HTTP.GET(SYSTEM_BACKEND_API.NO_PERMISSION.TOKEN_VERIFY.URL);
-        if (res.code === 200) {
-          setVerified(true);
-        } else {
-          setVerified(false);
-        }
+        setVerified(res.code === 200);
       } catch (e) {
         console.error('Token 验证失败:', e);
         setVerified(false);
@@ -43,8 +43,10 @@ const AuthGuard = ({ children }) => {
     );
   }
 
-  if (!verified) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  // requireAuth=true: 未登录跳转 /login
+  // requireAuth=false: 已登录跳转 /dashboard
+  if ((requireAuth && !verified) || (!requireAuth && verified)) {
+    return <Navigate to={requireAuth ? '/login' : '/dashboard'} state={{ from: location }} replace />;
   }
 
   return children;

@@ -53,7 +53,7 @@ import { GenerateGenderBadge } from '@/components/badge';
 const { Header, Sider, Content, Footer } = Layout;
 
 // 自定义主题
-let customTheme = localStorage.getItem('customTheme') || 'dark';
+let customTheme = localStorage.getItem('custom-theme') || 'dark';
 
 // 菜单配置
 const menuItems = [
@@ -174,7 +174,7 @@ const menuItems = [
 
 // 切换主题
 const SwitchTheme = () => {
-  localStorage.setItem('customTheme', customTheme === 'dark' ? 'light' : 'dark');
+  localStorage.setItem('custom-theme', customTheme === 'dark' ? 'light' : 'dark');
   window.location.reload();
 };
 
