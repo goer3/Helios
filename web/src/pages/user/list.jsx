@@ -14,7 +14,7 @@ import SCard from '@/components/ui/s-card';
 // 页面基础信息
 const pageTitle = '用户列表';
 const pageTitleEn = 'USER LIST';
-const pageDescription = 'Administrators can use this list to modify the personal information and permissions of specific users.';
+const pageDescription = 'Administrators can use this list to manage user profiles and permission settings.';
 
 const columns = [
   {
