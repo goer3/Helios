@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -44,14 +44,11 @@ import {
   Avatar,
   Dropdown,
   Breadcrumb,
-  Space,
-  App
+  Space
 } from 'antd';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { LogoWhite, LogoBlack, LogoCollapsed, DefaultAvatar } from '@/components/image';
 import { GenerateGenderBadge } from '@/components/badge';
-import { SYSTEM_BACKEND_API } from '@/config';
-import HTTP from '@/utils/axios';
 
 const { Header, Sider, Content, Footer } = Layout;
 
@@ -256,7 +253,6 @@ const logoStyle = {
 };
 
 const AdminLayout = () => {
-  const { message } = App.useApp();
   // 菜单折叠
   const [collapsed, setCollapsed] = useState(false);
   // 路由跳转
@@ -264,24 +260,6 @@ const AdminLayout = () => {
   const { pathname } = useLocation();
   // 菜单跳转
   const menuNavigateHandler = React.useCallback(({ key }) => navigate(key), [navigate]);
-
-  // 验证用户 Token
-  const tokenVerifyHandler = async () => {
-    try {
-      const res = await HTTP.GET(SYSTEM_BACKEND_API.NO_PERMISSION.TOKEN_VERIFY.URL);
-      if (res.code !== 200) {
-        message.error(res.message || '登录状态验证失败');
-        localStorage.clear();
-        navigate('/login');
-      }
-    } catch (e) {
-      message.error(e.message || '网络异常，请稍后重试');
-    }
-  };
-
-  useEffect(() => {
-    tokenVerifyHandler();
-  }, []);
 
   // 退出登录
   const logoutHandler = () => {

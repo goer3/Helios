@@ -1,6 +1,7 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 import RouteLazyLoad from '@/router/lazyload';
 import AdminLayout from '@/components/layout';
+import AuthGuard from '@/router/auth-guard';
 import LoginAndErrorLayout from '@/components/login-and-error-layout';
 
 // 路由列表
@@ -11,7 +12,7 @@ export const RouteRules = [
   },
   {
     path: '/',
-    element: <AdminLayout />,
+    element: <AuthGuard><AdminLayout /></AuthGuard>,
     children: [
       {
         path: '/dashboard',
